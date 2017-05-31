@@ -5,6 +5,7 @@ by StasyanG
 """
 from __future__ import absolute_import, division, print_function
 
+import argparse
 import sys
 import os
 import simplejson as json
@@ -116,16 +117,17 @@ def get_lyrics_url(track_data, client_access_token):
         print('Status code:', status)
         return None
 
-def load_data(src_folder, target_folder, client_access_token):
+def load_data(src_folder, target_folder, client_access_token, start_index=None):
     """
     Overview
     ----------
     Goes through data folder (LastFM dataset) and for each track tries to get
-    sample file URL (from Deezer) and lyrics page URL (from Genius)
+    sample file URL (from Deezer) and lyrics page URL (from Genius).\n
     If sample URL and lyrics are found then we create new .json file with
-    updated track data
+    updated track data.\n
     It does not overwrite LastFM dataset - it creates files with the same name
-    plus suffix (e.g. TRBBBNA12903CB336B.json ==> TRBBBNA12903CB336B-upd.json)
+    plus suffix.\n
+    (e.g. TRBBBNA12903CB336B.json ==> TRBBBNA12903CB336B-upd.json)
 
     Parameters
     ----------
@@ -133,15 +135,28 @@ def load_data(src_folder, target_folder, client_access_token):
         Absolute path to the folder with LastFM dataset
     target_fodler (string):
         Absolute path to the folder where to put new track data
+    client_access_token (string):
+        Genius API Client Access Token
+    start_index (string):
+        Track ID to start from (e.g. TRARYTX128F145F6AA)
 
     Returns
     ----------
     None
     """
+    sindex = start_index
     for root, dirs, files in os.walk(src_folder):
-        for file in files:
-            if file.endswith(".json"):
-                path = os.path.join(root, file)
+        for sfile in files:
+            if sfile.endswith(".json"):
+                # get file name (track id) to compare with start_index
+                if sindex is not None:
+                    filename = sfile[:sfile.rfind('.')]
+                    if sindex == filename:
+                        sindex = None
+                    else:
+                        continue
+
+                path = os.path.join(root, sfile)
                 # get data from .json file
                 track_data = None
                 with open(path) as fp_in:
@@ -167,25 +182,42 @@ def load_data(src_folder, target_folder, client_access_token):
                 track_data['lyrics_url'] = lyrics_url
 
                 # store new track_data to a new file
-                new_path = os.path.join(target_folder, file[:file.rfind('.')] + '-upd.json')
+                new_path = os.path.join(target_folder, sfile[:sfile.rfind('.')] + '-upd.json')
                 with open(new_path, 'w+') as fp_out:
                     json.dump(track_data, fp_out)
+        """
         for dirname in dirs:
-            load_data(os.path.join(src_folder, dirname), target_folder, client_access_token)
+            load_data(
+                os.path.join(src_folder, dirname),
+                target_folder,
+                client_access_token,
+                sindex
+                )
+        """
 
 
 if __name__ == "__main__":
     print(sys.argv[0])
     print('\nScript to complete LastFM dataset with samples (Deezer) and lyrics (Genius)')
 
-    DATA_PATH = sys.argv[1] # relative to root path
-    TARGET_PATH = sys.argv[2] # relative to root path
-    GENIUS_CLIEN_ACCESS_TOKEN = sys.argv[3] # client access token for Genius API
+    PARSER = argparse.ArgumentParser()
+    PARSER.add_argument("-d", "--data", help="Path to the folder with LastFM dataset")
+    PARSER.add_argument("-t", "--target", help="Path to the folder where to put new track data")
+    PARSER.add_argument("-a", "--access", help="Genius API Client Access Token")
+    PARSER.add_argument("-s", "--start", help="Track ID to start from (e.g. TRARYTX128F145F6AA)")
+    ARGS = PARSER.parse_args()
+
+    DATA_PATH = ARGS.data
+    TARGET_PATH = ARGS.target
+    GENIUS_CLIEN_ACCESS_TOKEN = ARGS.access # client access token for Genius API
+    START_INDEX = ARGS.start
 
     print('\nData folder:', DATA_PATH)
     print('Target folder:', TARGET_PATH)
-    print('Genius client access token:', GENIUS_CLIEN_ACCESS_TOKEN, end='\n\n')
+    print('Genius client access token:', GENIUS_CLIEN_ACCESS_TOKEN)
+    if START_INDEX:
+        print('Start index:', START_INDEX, end='\n\n')
+    else:
+        print()
 
-    load_data(DATA_PATH, TARGET_PATH, GENIUS_CLIEN_ACCESS_TOKEN)
-
-
+    load_data(DATA_PATH, TARGET_PATH, GENIUS_CLIEN_ACCESS_TOKEN, START_INDEX)

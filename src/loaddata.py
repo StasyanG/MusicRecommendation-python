@@ -165,14 +165,12 @@ def load_data(src_folder, target_folder, client_access_token, start_index=None):
                 # get sample URL from Deezer
                 sample_url = get_sample_url(track_data)
                 if sample_url is not None:
-                #print('Sample URL "' + track_data['artist'] + ' - ' + track_data['title'] + '"')
                     print(sample_url)
                 else:
                     continue
                 # get lyrics from Genius
                 lyrics_url = get_lyrics_url(track_data, client_access_token)
                 if lyrics_url is not None:
-                #print('Lyrics URL "' + track_data['artist'] + ' - ' + track_data['title'] + '"')
                     print(lyrics_url)
                 else:
                     continue
@@ -183,18 +181,8 @@ def load_data(src_folder, target_folder, client_access_token, start_index=None):
 
                 # store new track_data to a new file
                 new_path = os.path.join(target_folder, sfile[:sfile.rfind('.')] + '-upd.json')
-                with open(new_path, 'w+') as fp_out:
+                with open(new_path, 'w') as fp_out:
                     json.dump(track_data, fp_out)
-        """
-        for dirname in dirs:
-            load_data(
-                os.path.join(src_folder, dirname),
-                target_folder,
-                client_access_token,
-                sindex
-                )
-        """
-
 
 if __name__ == "__main__":
     print(sys.argv[0])

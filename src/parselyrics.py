@@ -42,9 +42,12 @@ def get_lyrics_text(lyrics_url):
     }
 
     page_html = utils.get_request(lyrics_url, headers=headers)
-    bsoup = BeautifulSoup(page_html, "lxml")
-    lyrics_text = bsoup.find('div', {'class': 'lyrics'}).text
-    return utils.ascii_string(lyrics_text)
+    if page_html:
+        bsoup = BeautifulSoup(page_html, "lxml")
+        lyrics_text = bsoup.find('div', {'class': 'lyrics'}).text
+        return utils.ascii_string(lyrics_text)
+    else:
+        return None
 
 def store_lyrics_text(target_path, track_id, text):
     """
@@ -122,7 +125,11 @@ def main(data_path, target_path, start_index=None):
                 if lyrics_url:
                     print(lyrics_url)
                     lyrics_text = get_lyrics_text(lyrics_url)
-                    store_lyrics_text(target_path, track_id, lyrics_text)
+                    if lyrics_text:
+                        store_lyrics_text(target_path, track_id, lyrics_text)
+                    else:
+                        print('No lyrics data')
+                        continue
                 else:
                     print('No lyrics data')
                     continue

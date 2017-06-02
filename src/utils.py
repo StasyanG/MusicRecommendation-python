@@ -39,8 +39,11 @@ def get_request(url, parameters=None, headers=None):
                 request.add_header(header_name, header_value)
     # Get result
     result = None
-    with urllib.request.urlopen(request) as response:
-        result = response.read()
+    try:
+        with urllib.request.urlopen(request) as response:
+            result = response.read()
+    except urllib.request.HTTPError as err:
+        print('Could not access the page ' + request.full_url + ' (', err.code, ')')
     return result
 
 def ascii_string(string):

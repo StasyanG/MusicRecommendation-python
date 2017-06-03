@@ -109,9 +109,12 @@ def main(data_path, target_path, start_index=None):
                 path = os.path.join(root, sfile)
                 # get data from .json file
                 track_data = None
-                with open(path) as fp_in:
-                    track_data = json.load(fp_in)
-                print('...')
+                try:
+                    with open(path) as fp_in:
+                        track_data = json.load(fp_in)
+                    print('...')
+                except json.decoder.JSONDecodeError as err:
+                    print('JSON Decoding problem [', path, ']')
 
                 track_id = None
                 lyrics_url = None

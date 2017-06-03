@@ -84,6 +84,9 @@ def get_lyrics_url(track_data, client_access_token):
     response = utils.get_request(
         'https://api.genius.com/search', parameters=params, headers=headers
         )
+    if not response:
+        return None
+
     obj = json.loads(response.decode())
     status = obj['meta']['status']
     if status == 200:

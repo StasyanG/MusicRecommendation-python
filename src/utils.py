@@ -4,8 +4,6 @@ import urllib.request
 
 def get_request(url, parameters=None, headers=None):
     """
-    Overview
-    ----------
     Calls URL (GET request) and returns response data
 
     Parameters
@@ -48,8 +46,6 @@ def get_request(url, parameters=None, headers=None):
 
 def ascii_string(string):
     """
-    Overview
-    ----------
     Return a string with spaces in places of non-ascii characters
 
     Parameters

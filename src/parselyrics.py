@@ -17,8 +17,6 @@ import utils
 
 def get_lyrics_text(lyrics_url):
     """
-    Overview
-    ----------
     Gets lyrics text from the page that can be accessed via given URL
 
     Parameters
@@ -49,10 +47,8 @@ def get_lyrics_text(lyrics_url):
     else:
         return None
 
-def store_lyrics_text(target_path, track_id, text):
+def store_lyrics_text(target_path, track_id, text, extension=".txt"):
     """
-    Overview
-    ----------
     Stores lyrics text into a file
 
     Parameters
@@ -68,12 +64,12 @@ def store_lyrics_text(target_path, track_id, text):
     ----------
     None
     """
-    file_path = os.path.join(target_path, track_id + '.txt')
+    file_path = os.path.join(target_path, track_id + extension)
     print(file_path)
     with open(file_path, 'w') as fp_out:
         fp_out.write(text)
 
-def main(data_path, target_path, start_index=None):
+def main(data_path, target_path, skip, start_index=None):
     """
     Overview
     ----------
@@ -85,22 +81,26 @@ def main(data_path, target_path, start_index=None):
     Parameters
     ----------
     data_path (string): \n
-    \t Absolute path to the folder with tracks data \n
+    \t Path to the folder with tracks data \n
     target_fodler (string): \n
-    \t Absolute path to the folder where to put files with lyrics \n
+    \t Path to the folder where to put files with lyrics \n
 
     Returns
     ----------
     None
     """
 
+    extension = ".txt"
+
     sindex = start_index
     for root, dirs, files in os.walk(data_path):
         for sfile in files:
             if sfile.endswith(".json"):
+                filename = sfile[:(sfile.rfind('-') if '-' in sfile else sfile.rfind('.'))]
+                if skip and os.path.isfile(os.path.join(target_path, filename + extension)):
+                    continue
                 # get file name (track id) to compare with start_index
                 if sindex is not None:
-                    filename = sfile[:(sfile.rfind('-') if '-' in sfile else sfile.rfind('.'))]
                     if sindex == filename:
                         sindex = None
                     else:
@@ -129,7 +129,7 @@ def main(data_path, target_path, start_index=None):
                     print(lyrics_url)
                     lyrics_text = get_lyrics_text(lyrics_url)
                     if lyrics_text:
-                        store_lyrics_text(target_path, track_id, lyrics_text)
+                        store_lyrics_text(target_path, track_id, lyrics_text, extension)
                     else:
                         print('No lyrics data')
                         continue
@@ -147,17 +147,20 @@ if __name__ == "__main__":
     PARSER.add_argument("-d", "--data", help="Path to the folder with tracks' data")
     PARSER.add_argument("-t", "--target", help="Path to the folder where to put files with lyrics")
     PARSER.add_argument("-s", "--start", help="Track ID to start from (e.g. TRARYTX128F145F6AA)")
+    PARSER.add_argument("--skip", action='store_true', help="Skip already downloaded data")
     ARGS = PARSER.parse_args()
 
     DATA_PATH = ARGS.data
     TARGET_PATH = ARGS.target
+    SKIP = ARGS.skip
     START_INDEX = ARGS.start
 
     print('\nData folder:', DATA_PATH)
-    print('Target folder:', TARGET_PATH, end='\n\n')
+    print('Target folder:', TARGET_PATH)
+    print('Slip already downloaded data:', SKIP)
     if START_INDEX:
-        print('Start index:', START_INDEX, end='\n\n')
-    else:
-        print()
+        print('Start index:', START_INDEX, end='')
+    print('\n')
 
-    main(DATA_PATH, TARGET_PATH, START_INDEX)
+
+    main(DATA_PATH, TARGET_PATH, SKIP, START_INDEX)

@@ -13,8 +13,6 @@ import utils
 
 def get_sample_url(track_data):
     """
-    Overview
-    ----------
     Gets URL of sample file from Deezer using its API
 
     Parameters
@@ -51,8 +49,6 @@ def get_sample_url(track_data):
 
 def get_lyrics_url(track_data, client_access_token):
     """
-    Overview
-    ----------
     Gets lyrics page URL from Genius using its API
 
     Parameters

@@ -21,13 +21,11 @@ def get_lyrics_text(lyrics_url):
 
     Parameters
     ----------
-    lyrics_url (string): \n
-    \t Lyrics page URL \n
+        lyrics_url (str): Lyrics page URL
 
     Returns
     ----------
-    lyrics_text (string): \n
-    \t Lyrics text \n
+        lyrics_text (str): Lyrics text
     """
 
     headers = {
@@ -53,16 +51,13 @@ def store_lyrics_text(target_path, track_id, text, extension=".txt"):
 
     Parameters
     ----------
-    target_path (string): \n
-    \t Absolute path to the target folder \n
-    track_id (string): \n
-    \t Track ID (LastFM dataset) \n
-    text (string): \n
-    \t Lyrics text to write \n
+        target_path (str): Absolute path to the target folder
+        track_id (str): Track ID (LastFM dataset)
+        text (str): Lyrics text to write
 
     Returns
     ----------
-    None
+        None
     """
     file_path = os.path.join(target_path, track_id + extension)
     print(file_path)
@@ -80,16 +75,15 @@ def main(data_path, target_path, skip, start_index=None):
 
     Parameters
     ----------
-    data_path (string): \n
-    \t Path to the folder with tracks data \n
-    target_fodler (string): \n
-    \t Path to the folder where to put files with lyrics \n
+        data_path (str): Path to the folder with tracks data
+        target_fodler (str): Path to the folder where to put files with lyrics
 
     Returns
     ----------
-    None
+        None
     """
 
+    ### TODO: rethink this (because it is used in another files)
     extension = ".txt"
 
     sindex = start_index
@@ -113,7 +107,7 @@ def main(data_path, target_path, skip, start_index=None):
                     with open(path) as fp_in:
                         track_data = json.load(fp_in)
                     print('...')
-                except json.decoder.JSONDecodeError as err:
+                except json.decoder.JSONDecodeError:
                     print('JSON Decoding problem [', path, ']')
 
                 track_id = None

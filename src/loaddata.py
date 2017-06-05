@@ -6,8 +6,8 @@ by StasyanG
 from __future__ import absolute_import, division, print_function
 
 import argparse
-import sys
 import os
+import sys
 import simplejson as json
 import utils
 
@@ -17,13 +17,11 @@ def get_sample_url(track_data):
 
     Parameters
     ----------
-    track_data (dict):
-        Track data from LastFM dataset
+        track_data (dict): Track data from LastFM dataset
 
     Returns
     ----------
-    url (string):
-        Sample file URL
+        url (str): Sample file URL
     """
     artist = track_data['artist']
     title = track_data['title']
@@ -53,15 +51,12 @@ def get_lyrics_url(track_data, client_access_token):
 
     Parameters
     ----------
-    track_data (dict):
-        Track data from LastFM dataset
-    client_access_token (string):
-        Client Access Token for Genius API
+        track_data (dict): Track data from LastFM dataset
+        client_access_token (str): Client Token for Genius API
 
     Returns
     ----------
-    url (string):
-        Lyrics page URL
+        url (str): Lyrics page URL
     """
     artist = track_data['artist']
     title = track_data['title']
@@ -130,18 +125,14 @@ def load_data(src_folder, target_folder, client_access_token, start_index=None):
 
     Parameters
     ----------
-    src_folder (string):
-        Absolute path to the folder with LastFM dataset
-    target_fodler (string):
-        Absolute path to the folder where to put new track data
-    client_access_token (string):
-        Genius API Client Access Token
-    start_index (string):
-        Track ID to start from (e.g. TRARYTX128F145F6AA)
+        src_folder (str): Absolute path to the folder with LastFM dataset
+        target_fodler (str): Absolute path to the folder where to put new track data
+        client_access_token (str): Genius API Client Access Token
+        start_index (str): Track ID to start from (e.g. TRARYTX128F145F6AA)
 
     Returns
     ----------
-    None
+        None
     """
     sindex = start_index
     for root, dirs, files in os.walk(src_folder):

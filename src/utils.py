@@ -8,17 +8,13 @@ def get_request(url, parameters=None, headers=None):
 
     Parameters
     ----------
-    url (string):
-        URL to call
-    parameters (dict):
-        Request parameters
-    headers (dict):
-        Request headers
+        url (str): URL to call
+        parameters (dict): Request parameters
+        headers (dict): uest headers
 
     Returns
     ----------
-    result:
-        Response data
+        result: Response data
     """
     # Construct param string
     param_string = ''
@@ -50,13 +46,11 @@ def ascii_string(string):
 
     Parameters
     ----------
-    string (string):
-        String to filter
+        string (str): String to filter
 
     Returns
     ----------
-    (string):
-        String without non-ascii characters
+        (string): String without non-ascii characters
     """
     return ''.join([i if ord(i) < 128 else ' ' for i in string])
 

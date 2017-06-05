@@ -13,13 +13,11 @@ def clean_lyrics(text):
 
     Parameters
     ----------
-    text (string):
-        Lyrics text
+        text (str): Lyrics text
 
     Returns
     ----------
-    clean_text (string):
-        Cleaned text
+        clean_text (str): Cleaned text
     """
 
     # to lower

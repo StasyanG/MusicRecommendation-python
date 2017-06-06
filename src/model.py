@@ -1,6 +1,8 @@
 """
 The definition of the model, which will be trained on collected data
 to predict song similarity
+AND
+helper-functions
 
 by StasyanG
 """
@@ -12,6 +14,7 @@ import simplejson as json
 import tensorflow as tf
 
 import preprocessing
+import utils
 
 def read_track_data(filename, fields):
     """
@@ -55,7 +58,28 @@ def read_lyrics_data(filename):
         data = tf.compat.as_str(clean_lyrics).split()
     return data
 
-def read_data(data_path, lyrics_path, samples_path=None, max_cnt=None):
+def read_sample_data(url):
+    """
+    Gets sample file from URL and returns its' representation as audio spectrum data
+    """
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) '
+                      + 'AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+        'Accept-Encoding': 'none',
+        'Accept-Language': 'en-US,en;q=0.8',
+        'Connection': 'keep-alive'
+    }
+    data = utils.get_request(url, headers=headers)
+    with open('tmp.mp3', 'wb') as f_out:
+        f_out.write(data)
+
+    s_data = preprocessing.read_audio_spectrogram('tmp.mp3')
+    os.remove('tmp.mp3')
+    return s_data
+
+def read_data(data_path, lyrics_path, fields, max_cnt=None):
     """
     Reads track data from data_folder and gets lyrics for it in lyrics_folder
 
@@ -63,7 +87,6 @@ def read_data(data_path, lyrics_path, samples_path=None, max_cnt=None):
     ----------
         data_path (str): Path to the folder with track data
         lyrics_path (str): Path to the folder with lyrics
-        samples_path (str): Path to the folder with audio samples
 
     Returns
     ----------
@@ -71,8 +94,7 @@ def read_data(data_path, lyrics_path, samples_path=None, max_cnt=None):
     """
     data = []
     cnt = 0
-    exit_flag = False
-    for root, dirs, files in os.walk(data_path):
+    for root, _, files in os.walk(data_path):
         for sfile in files:
             if sfile.endswith(".json"):
                 filename = sfile[:(sfile.rfind('-') if '-' in sfile else sfile.rfind('.'))]
@@ -81,33 +103,33 @@ def read_data(data_path, lyrics_path, samples_path=None, max_cnt=None):
                 data_item = {}
 
                 # get track data
-                fields = ['track_id', 'artist', 'title', 'similars', 'lyrics_url', 'sample_url']
                 data_item = read_track_data(path, fields)
 
-                ### TODO: rethink this (because it is used in another files)
+                ### TODO: Rethink this (because it is used in another files)
                 extension = ".txt"
-                lyrics_path = os.path.join(lyrics_path, filename + extension)
+
+                lyrics_file = os.path.join(lyrics_path, filename + extension)
 
                 # get lyrics data
-                if os.path.isfile(lyrics_path):
-                    lyrics_data = read_lyrics_data(lyrics_path)
+                if os.path.isfile(lyrics_file):
+                    lyrics_data = read_lyrics_data(lyrics_file)
                     if lyrics_data:
                         data_item['lyrics_data'] = lyrics_data
                 # if no lyrics -> continue (we can't use this track)
                 if not lyrics_data:
                     continue
 
-                ### TODO: get sample data
-                if samples_path:
-                    None
-                    # do something
+                ### TODO: Maybe there is a better way of getting sample data
+                sample_url = data_item['sample_url']
+                if sample_url:
+                    s_data = read_sample_data(sample_url)
+                    data_item['sample_data'] = s_data
 
                 data.append(data_item)
                 cnt += 1
                 if max_cnt and cnt >= max_cnt:
-                    exit_flag = True
                     break
-        if exit_flag:
+        if max_cnt and cnt >= max_cnt:
             break
 
     return data
@@ -115,7 +137,10 @@ def read_data(data_path, lyrics_path, samples_path=None, max_cnt=None):
 def main(data_path, lyrics_path):
     """ Main function (temporary) """
     print('The model')
-    test_data = read_data(data_path, lyrics_path, max_cnt=5)
+
+    fields = ['track_id', 'artist', 'title', 'similars', 'lyrics_url', 'sample_url']
+    test_data = read_data(data_path, lyrics_path, fields, max_cnt=5)
+
     print(str(test_data).encode(sys.stdout.encoding, errors='replace'))
 
 if __name__ == "__main__":

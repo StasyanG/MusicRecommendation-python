@@ -33,7 +33,8 @@ def get_sample_url(track_data):
         )
     obj = json.loads(response.decode())
     if 'error' in obj.keys():
-        print('Could not get sample URL for "' + utils.ascii_string(artist) + ' - ' + utils.ascii_string(title) + '"')
+        print('Could not get sample URL for "'
+              + utils.ascii_string(artist) + ' - ' + utils.ascii_string(title) + '"')
         print('Error code:', obj['error']['code'])
         print('Error message:', obj['error']['message'])
         return None
@@ -65,7 +66,8 @@ def get_lyrics_url(track_data, client_access_token):
         'q': artist + ' ' + title,
     }
     headers = {
-        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64)'
+                      + ' AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
         'Accept-Encoding': 'none',
@@ -83,7 +85,8 @@ def get_lyrics_url(track_data, client_access_token):
     if status == 200:
         hits = obj['response']['hits']
         if len(hits) is 0:
-            print('Could not get lyrics for "' + utils.ascii_string(artist) + ' - ' + utils.ascii_string(title) + '"')
+            print('Could not get lyrics for "'
+                  + utils.ascii_string(artist) + ' - ' + utils.ascii_string(title) + '"')
             print('Track not found')
             return None
         else:
@@ -103,11 +106,13 @@ def get_lyrics_url(track_data, client_access_token):
             if url is not None:
                 return url
             else:
-                print('Could not get lyrics for "' + utils.ascii_string(artist) + ' - ' + utils.ascii_string(title) + '"')
+                print('Could not get lyrics for "'
+                      + utils.ascii_string(artist) + ' - ' + utils.ascii_string(title) + '"')
                 print('Lyrics not found')
                 return None
     else:
-        print('Could not get lyrics for "' + utils.ascii_string(artist) + ' - ' + utils.ascii_string(title) + '"')
+        print('Could not get lyrics for "'
+              + utils.ascii_string(artist) + ' - ' + utils.ascii_string(title) + '"')
         print('Status code:', status)
         return None
 
@@ -135,7 +140,7 @@ def load_data(src_folder, target_folder, client_access_token, start_index=None):
         None
     """
     sindex = start_index
-    for root, dirs, files in os.walk(src_folder):
+    for root, _, files in os.walk(src_folder):
         for sfile in files:
             if sfile.endswith(".json"):
                 # get file name (track id) to compare with start_index

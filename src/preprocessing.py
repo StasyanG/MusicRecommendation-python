@@ -6,6 +6,8 @@ by StasyanG
 
 import os
 import re
+import numpy as np
+import librosa
 
 def clean_lyrics(text):
     """
@@ -36,3 +38,25 @@ def clean_lyrics(text):
     clean_text = re.sub(r'\s{2,}', ' ', clean_text)
 
     return clean_text
+
+def read_audio_spectrogram(filename):
+    """
+    Reads spectrogram data from the given audio file
+
+    Parameters
+    ----------
+        filename (str): Path to the audio file
+
+    Returns
+    ----------
+        stft_matrix (array): ** See Docs for ibrosa.core.stft
+    """
+    # loading audio data
+    audio_data, _ = librosa.load(filename)
+    # Short-time Fourier transform
+    stft_matrix = librosa.stft(audio_data)
+    ### TODO: Think about audio representation as a spectrogram
+    # Get only phases
+    phase_matrix = np.angle(stft_matrix)
+
+    return phase_matrix

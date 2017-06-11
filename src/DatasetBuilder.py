@@ -51,6 +51,19 @@ class DatasetBuilder:
         print('> > Positive:', len(self.test_data['pos']))
         print('> > Negative:', len(self.test_data['neg']))
 
+    def dump(self, name):
+        """
+        Dumps dataset into 4 files
+        """
+        with open(name + '_train.pos', 'w') as fp_out:
+            json.dump(self.train_data['pos'], fp_out)
+        with open(name + '_train.neg', 'w') as fp_out:
+            json.dump(self.train_data['neg'], fp_out)
+        with open(name + '_test.pos', 'w') as fp_out:
+            json.dump(self.test_data['pos'], fp_out)
+        with open(name + '_test.neg', 'w') as fp_out:
+            json.dump(self.test_data['neg'], fp_out)
+
     def read_data(self, is_train, max_pos=None):
         """
         Fills self.train_data or self.test_data structures with train/test samples.

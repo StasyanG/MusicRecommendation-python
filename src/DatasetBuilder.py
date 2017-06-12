@@ -122,7 +122,7 @@ class DatasetBuilder:
                             if lyrics_data:
                                 data_item['lyrics_data'] = lyrics_data
                         # if no lyrics -> continue (we can't use this track)
-                        if not lyrics_data:
+                        if 'lyrics_data' not in data_item or not lyrics_data:
                             continue
                     else:
                         ### TODO: Maybe there is a better way of getting sample data
@@ -195,7 +195,7 @@ class DatasetBuilder:
                             'pair': (data_item['track_id'], similar),
                             'data_1': data_item['lyrics_data'] if self.is_text is True else data_item['sample_data'],
                             'data_2': sim_data['lyrics_data'] if self.is_text is True else sim_data['sample_data'],
-                            'score': score
+                            'score': 1 if score >= self.pos_neg_threshold else 0
                         }
                         if score >= self.pos_neg_threshold:
                             if is_train is True:
@@ -203,18 +203,39 @@ class DatasetBuilder:
                             else:
                                 self.test_data['pos'].append(new_item)
                             cnt += 1
+                            print()
+                            self.info()
                         else:
                             if is_train is True:
                                 self.train_data['neg'].append(new_item)
                             else:
                                 self.test_data['neg'].append(new_item)
                             cnt2 += 1
+                            print()
+                            self.info()
                         if max_pos and cnt >= max_pos and cnt2 >= max_pos:
                             break
                     if max_pos and cnt >= max_pos and cnt2 >= max_pos:
                         break
             if max_pos and cnt >= max_pos and cnt2 >= max_pos:
                 break
+
+    def load_from_file(self, filename, is_train, is_pos):
+        """
+        Reads dataset data from file
+        """
+        with open(filename) as fp_in:
+            data = json.load(fp_in)
+            if is_train is True:
+                if is_pos is True:
+                    self.train_data['pos'] = data
+                else:
+                    self.train_data['neg'] = data
+            else:
+                if is_pos is True:
+                    self.test_data['pos'] = data
+                else:
+                    self.test_data['neg'] = data
 
     def _read_track_data(self, filename):
         """
@@ -235,7 +256,8 @@ class DatasetBuilder:
                 for field in self.data_fields:
                     data_item[field] = track_data[field]
         except FileNotFoundError:
-            print('Warning: File not found [', filename, ']')
+            # print('Warning: File not found [', filename, ']')
+            return None
         except json.decoder.JSONDecodeError:
             print('JSON Decoding problem [', filename, ']')
 
@@ -256,7 +278,8 @@ class DatasetBuilder:
         with open(filename) as file:
             lyrics = file.read()
             clean_lyrics = preprocessing.clean_lyrics(lyrics)
-            data = tf.compat.as_str(clean_lyrics).split()
+            #data = tf.compat.as_str(clean_lyrics).split()
+            data = clean_lyrics
         return data
 
     def _read_sample_data(self, url):
@@ -288,5 +311,4 @@ class DatasetBuilder:
             if item[field] is value:
                 res = True
                 break
-        print(res)
         return res

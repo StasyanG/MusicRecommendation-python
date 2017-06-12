@@ -31,11 +31,13 @@ def clean_lyrics(text):
     # remove empty lines and lines containing only whitespaces
     clean_text = os.linesep.join([s for s in clean_text.splitlines() if s.strip()])
     # add whitespaces around punctuation
-    clean_text = re.sub('([.,!?()])', r' \1 ', clean_text)
+    clean_text = re.sub('([.,!?()])', r' ', clean_text)
     # replace newlines with whitespace
     clean_text = re.sub('\r\n', ' ', clean_text)
     # replace repeating whitespaces by one whitespace
     clean_text = re.sub(r'\s{2,}', ' ', clean_text)
+    
+    clean_text = clean_text.strip()
 
     return clean_text
 

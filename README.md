@@ -10,6 +10,6 @@ Building the model...
 
 ### Dependencies
 - Python (tested with 3.5.2)
-- TensorFlow ([Installation instructions](https://www.tensorflow.org/install/))
+- Theano + Keras
 - [librosa](https://github.com/librosa/librosa) (a python package for music and audio analysis)
 - (__optional__) [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) (you don't need this if you won't use parselyrics.py to get lyrics from html pages)

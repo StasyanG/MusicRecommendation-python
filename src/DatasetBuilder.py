@@ -5,7 +5,6 @@ amount of positive and negative examples.
 
 import os
 import simplejson as json
-import tensorflow as tf
 
 import preprocessing
 import utils

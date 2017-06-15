@@ -1,7 +1,7 @@
 This is my University project on Music Recommendation using neural networks
 
 ### Status:
-Building the model...
+Experimenting with the model & Training...
 
 ### Data:
 1. [Last.fm dataset](http://labrosa.ee.columbia.edu/millionsong/lastfm), the official song tags and song similarity collection for the Million Song Dataset.

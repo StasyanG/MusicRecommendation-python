@@ -59,6 +59,6 @@ def read_audio_spectrogram(filename):
     stft_matrix = librosa.stft(audio_data)
     ### TODO: Think about audio representation as a spectrogram
     # Get only phases
-    phase_matrix = np.angle(stft_matrix)
+    phase_matrix = np.abs(stft_matrix)
 
     return phase_matrix

@@ -14,3 +14,6 @@ Trying to train a model for audio comparison...
 - Theano + Keras
 - [librosa](https://github.com/librosa/librosa) (a python package for music and audio analysis)
 - (__optional__) [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) (you don't need this if you won't use parselyrics.py to get lyrics from html pages)
+
+### Known Issues
+- DatasetBuilder eats all the memory (need to fix this)

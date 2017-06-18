@@ -36,7 +36,7 @@ def get_request(url, parameters=None, headers=None):
     try:
         with urllib.request.urlopen(request) as response:
             result = response.read()
-    except urllib.request.HTTPError as err:
+    except (urllib.request.HTTPError, urllib.request.URLError) as err:
         print('Could not access the page ' + request.full_url + ' (', err.code, ')')
     return result
 

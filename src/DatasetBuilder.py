@@ -63,7 +63,7 @@ class DatasetBuilder:
         with open(name + '_test.neg', 'w') as fp_out:
             json.dump(self.test_data['neg'], fp_out)
 
-    def read_data(self, is_train, max_pos=None):
+    def read_data(self, is_train, max_pos=None, verbose=False):
         """
         Fills self.train_data or self.test_data structures with train/test samples.
 
@@ -71,6 +71,7 @@ class DatasetBuilder:
         ----------
             is_train (boolean): True if train data, False if test data
             max_pos (int): Maximum of positive/negative samples in dataset
+            verbose (boolean): Show info on each addition to dataset
 
         Returns
         ----------
@@ -174,6 +175,10 @@ class DatasetBuilder:
                             sfile[(sfile.rfind('-') if '-' in sfile else sfile.rfind('.')):]
                         sim_path = os.path.join(root, sim_filename)
                         sim_data = self._read_track_data(sim_path)
+
+                        if not sim_data:
+                            continue
+
                         if self.is_text is True:
                             sim_lyrics_path = os.path.join(lyrics_path, similar + extension)
                             sim_lyrics_data = None
@@ -202,16 +207,18 @@ class DatasetBuilder:
                             else:
                                 self.test_data['pos'].append(new_item)
                             cnt += 1
-                            print()
-                            self.info()
+                            if verbose:
+                                print()
+                                self.info()
                         else:
                             if is_train is True:
                                 self.train_data['neg'].append(new_item)
                             else:
                                 self.test_data['neg'].append(new_item)
                             cnt2 += 1
-                            print()
-                            self.info()
+                            if verbose:
+                                print()
+                                self.info()
                         if max_pos and cnt >= max_pos and cnt2 >= max_pos:
                             break
                     if max_pos and cnt >= max_pos and cnt2 >= max_pos:
